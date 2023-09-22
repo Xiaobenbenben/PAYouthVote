@@ -1,6 +1,5 @@
 package com.demo.service.impl;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.demo.api.Member;
 import com.demo.service.MemberService;
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -16,7 +19,6 @@ import java.util.*;
 
 
 /**
- *
  */
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -27,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
     private Map<String, Member> checkinMemberCache = new HashMap<>();
 
     @Autowired
-    private DynamoDBMapper mapper;
+    private DynamoDbClient dynamoDbClient;
 
     @Override
     public Member getByUsername(String username) {
@@ -77,11 +79,24 @@ public class MemberServiceImpl implements MemberService {
         current.setFirstName(firstName);
         current.setLastName(lastName);
         current.setEmail(email);
-        current.setPhone(telephone);
-        current.setCreateTime(new Date());
+        HashMap<String, AttributeValue> itemValues = new HashMap<>();
+        itemValues.put("Email", AttributeValue.builder().s(email).build());
+        itemValues.put("FirstName", AttributeValue.builder().s(firstName).build());
+        itemValues.put("LastName", AttributeValue.builder().s(lastName).build());
+
+        PutItemRequest request = PutItemRequest.builder()
+                .tableName("PA_YOUTH_VOTE_1025")
+                .item(itemValues)
+                .build();
         memberCache.put(email, current);
-//        mapper.save(current);
-        return "sign up was successful";
+        try {
+            PutItemResponse response = dynamoDbClient.putItem(request);
+            System.out.println("PA_YOUTH_VOTE_1025" + " was successfully updated. The request id is " + response.responseMetadata().requestId());
+            return "sign up was successful";
+        } catch (Exception e) {
+            System.out.println("insert db failed " + e.getMessage());
+            return "sign up was successful";
+        }
     }
 
     @Override

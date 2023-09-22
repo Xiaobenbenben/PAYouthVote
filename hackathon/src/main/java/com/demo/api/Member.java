@@ -26,9 +26,11 @@ public class Member implements Serializable {
 
     private String country;
 
+    private String authCode;
+
     @DynamoDBHashKey
     @DynamoDBAttribute
-    private String email;
+    private String Email;
 
 
     private String phone;
@@ -70,11 +72,11 @@ public class Member implements Serializable {
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.Email = email;
     }
 
     public Integer getStatus() {
@@ -225,6 +227,18 @@ public class Member implements Serializable {
         this.phone = phone;
     }
 
+    public String getAuthCode() {
+        return authCode;
+    }
+
+    public void setAuthCode(String authCode) {
+        this.authCode = authCode;
+    }
+
+    @DynamoDBHashKey
+    public String getHashKey() {
+        return String.valueOf(this.Email);
+    }
 
 
     @Override
@@ -235,7 +249,7 @@ public class Member implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", username=").append(firstName);
-        sb.append(", phone=").append(email);
+        sb.append(", phone=").append(Email);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);
         sb.append(", icon=").append(icon);

@@ -46,9 +46,9 @@
             <version>1.6.2</version>
         </dependency>
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.11.327</version>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>dynamodb</artifactId>
+            <version>2.20.152</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
