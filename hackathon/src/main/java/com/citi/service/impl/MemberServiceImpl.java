@@ -66,9 +66,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public String register(String firstName, String lastName, String telephone, String email, String authCode) {
-        if (!verifyAuthCode(authCode, email)) {
-           return "Verification code error";
-        }
+//        if (!verifyAuthCode(authCode, email)) {
+//           return "Verification code error";
+//        }
         Member member = memberCache.get(email);
         if (Objects.nonNull(member) && StringUtils.equals(member.getEmail(), email)) {
             return "The user already exists";
