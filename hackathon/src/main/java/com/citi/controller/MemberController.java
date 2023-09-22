@@ -19,32 +19,37 @@ public class MemberController {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
+    @RequestMapping(value = "/healthcheck", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult healthcheck() {
+        return CommonResult.success(null, "Backend service is working well");
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult register(@RequestParam String firstName, String lastName, @RequestParam String password,
-                                 @RequestParam String phone, @RequestParam String email,
-                                 @RequestParam String authCode) throws ParseException {
-        memberService.register(firstName, lastName, password, phone, email, authCode);
-        return CommonResult.success(null, "sign up was successful");
+    public CommonResult register(@RequestParam String firstName, String lastName, @RequestParam(required = false) String phone,
+                                 @RequestParam String email, @RequestParam String authCode) {
+        String status = memberService.register(firstName, lastName, phone, email, authCode);
+        return CommonResult.success(null, status);
     }
 
     @RequestMapping(value = "/checkin", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult checkIn(@RequestParam String firstName, String lastName, @RequestParam String password, @RequestParam String phone,
+    public CommonResult checkIn(@RequestParam String firstName, String lastName, @RequestParam(required = false) String phone,
                                 @RequestParam String email, @RequestParam String authCode, long birth, String streetAddress, String city,
                                  int zipCode, String country) throws ParseException {
         Date birthday = simpleDateFormat.parse(String.valueOf(birth));
-        memberService.checkin(firstName, lastName, password, phone, email, authCode, birthday, streetAddress, city, zipCode, country);
-        return CommonResult.success(null, "sign up was successful");
+        String status = memberService.checkin(firstName, lastName, phone, email, authCode, birthday, streetAddress, city, zipCode, country);
+        return CommonResult.success(null, status);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult login(@RequestParam String email,
-                              @RequestParam String password) {
-        boolean successful = memberService.login(email, password);
+                              @RequestParam String authCode) {
+        boolean successful = memberService.login(email, authCode);
         if (!successful) {
-            return CommonResult.validateFailed("Incorrect email or password");
+            return CommonResult.validateFailed("Incorrect email or authCode");
         }
         return CommonResult.success("Login successful");
     }
@@ -61,12 +66,12 @@ public class MemberController {
     public CommonResult sendAuthCode(@RequestParam String email) {
 
         String authCode = memberService.generateAuthCode(email);
-        boolean successful = memberService.sendAuthCode(email, authCode);
-        if(successful) {
-            return CommonResult.success(authCode, "sent verification code successfully");
-        } else {
-            return CommonResult.success(authCode, "sent verification code failed");
+        try {
+            memberService.sendAuthCode(email, authCode);
+        } catch (Exception e) {
+            return CommonResult.success(e, "sent verification code failed");
         }
+        return CommonResult.success(null, "sent verification code successfully");
     }
 
 }

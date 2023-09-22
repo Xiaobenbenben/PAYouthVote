@@ -17,9 +17,9 @@ public interface MemberService {
 
     /**
      */
-    void register(String fristName, String lastName, String password, String telephone, String email, String authCode);
+    String register(String fristName, String lastName, String telephone, String email, String authCode);
 
-    void checkin(String fristName, String lastName, String password, String telephone, String email, String authCode,
+    String checkin(String fristName, String lastName, String telephone, String email, String authCode,
                  Date birthday, String streetAddress, String city, int zipCode, String country);
 
     /**

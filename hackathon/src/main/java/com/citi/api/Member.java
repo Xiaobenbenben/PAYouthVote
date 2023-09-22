@@ -23,6 +23,8 @@ public class Member implements Serializable {
 
     private String email;
 
+    private String phone;
+
     private int age;
 
     private Integer status;
@@ -213,6 +215,14 @@ public class Member implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     @Override

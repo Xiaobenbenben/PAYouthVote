@@ -6,14 +6,15 @@ import com.citi.service.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.*;
 
 /**
+ *
  */
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -21,24 +22,8 @@ public class MemberServiceImpl implements MemberService {
     private static final String AUTH_CODE = "AUTH_CODE";
     private Map<String, String> authCodeCache = new HashMap<>();
     private Map<String, Member> memberCache = new HashMap<>();
-    private Map<String, String> passwordCache = new HashMap<>();
+    private Map<String, Member> checkinMemberCache = new HashMap<>();
 
-//    @Autowired
-//    private JavaMailSender javaMailSender;
-
-    //    @Autowired
-//    private JwtTokenUtil jwtTokenUtil;
-//    @Autowired
-//    private UmsMemberMapper memberMapper;
-//    @Autowired
-//    private UmsMemberLevelMapper memberLevelMapper;
-//    @Autowired
-//    private UmsMemberCacheService memberCacheService;
-//    @Value("${redis.key.authCode}")
-//    private String REDIS_KEY_PREFIX_AUTH_CODE;
-//    @Value("${redis.expire.authCode}")
-//    private Long AUTH_CODE_EXPIRE_SECONDS;
-//
     @Override
     public Member getByUsername(String username) {
         return null;
@@ -51,44 +36,47 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void checkin(String firstName, String lastName, String password, String phone, String email, String authCode, Date birthday,
-                         String streetAddress, String city, int zipCode, String country) {
+    public String checkin(String firstName, String lastName, String phone, String email, String authCode, Date birthday,
+                        String streetAddress, String city, int zipCode, String country) {
         if (!verifyAuthCode(authCode, email)) {
-            Asserts.fail("Verification code error");
+            return "Verification code error";
         }
-        Member member = memberCache.get(email);
+        Member member = checkinMemberCache.get(email);
         if (Objects.nonNull(member) && StringUtils.equals(member.getEmail(), email)) {
-            Asserts.fail("The user already exists");
+           return "The user already exists";
         }
         Member current = new Member();
         current.setFirstName(firstName);
         current.setLastName(lastName);
         current.setEmail(email);
-        current.setPassword(password);
+        current.setPhone(phone);
         current.setBirthday(birthday);
         current.setStreetAddress(streetAddress);
         current.setCreateTime(new Date());
         current.setCity(city);
         current.setZipCode(zipCode);
         current.setCountry(country);
+        checkinMemberCache.put(email, current);
         memberCache.put(email, current);
+        return "checkin successfully";
     }
 
-    public void register(String firstName, String lastName, String password, String telephone, String email, String authCode) {
+    public String register(String firstName, String lastName, String telephone, String email, String authCode) {
         if (!verifyAuthCode(authCode, email)) {
-            Asserts.fail("Verification code error");
+           return "Verification code error";
         }
         Member member = memberCache.get(email);
         if (Objects.nonNull(member) && StringUtils.equals(member.getEmail(), email)) {
-            Asserts.fail("The user already exists");
+            return "The user already exists";
         }
         Member current = new Member();
         current.setFirstName(firstName);
         current.setLastName(lastName);
         current.setEmail(email);
-        current.setPassword(password);
+        current.setPhone(telephone);
         current.setCreateTime(new Date());
         memberCache.put(email, current);
+        return "sign up was successful";
     }
 
     @Override
@@ -105,15 +93,30 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean sendAuthCode(String email, String authCode) {
         try {
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setFrom("PA Youth Vote");
-            simpleMailMessage.setTo(email);
-            simpleMailMessage.setSubject("PA Youth Vote AuthCode");
-            simpleMailMessage.setText("Your PA Youth Vote AuthCode is: " + authCode);
-//            javaMailSender.send(simpleMailMessage);
-            return false;
+            Properties pros = new Properties();
+            pros.put("mail.smtp.host", "mx.mailslurp.com");
+            pros.put("mail.smtp.port", "2525");
+            pros.put("mail.smtp.auth", "true");
+            pros.put("mail.smtp.starttls.enable", "true");
+
+            Session session = Session.getInstance(pros, new Authenticator() {
+                String userName = "DxpIg0IwL4OuwTTugY3tIy5QqZdnHwfN";
+                String password = "tTIAFAPUwuwZjUh0YEHrSbHTJpa84MXH";
+
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(userName, password);
+                }
+            });
+            MimeMessage message=new MimeMessage(session);
+            message.setSubject("PV Youth Vote Authentication Code");
+            message.setText("Your PV Youth Vote Authentication Code is " + authCode);
+            message.setFrom(new InternetAddress("9dcb30d5-aeea-4346-9610-41acd02c3dba@mailslurp.mx"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(email));
+            Transport.send(message);
+            return true;
         } catch (Exception e) {
-            return false;
+            throw new RuntimeException(e);
         }
     }
 
@@ -146,7 +149,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean login(String email, String password) {
-        String expectedPassword = passwordCache.get(email);
+        String expectedPassword = authCodeCache.get(AUTH_CODE + ":" + email.trim());
         return StringUtils.equals(expectedPassword, password);
     }
 
