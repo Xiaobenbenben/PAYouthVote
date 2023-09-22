@@ -1,14 +1,22 @@
 package com.citi.api;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
+@DynamoDBTable(tableName = "PA_YOUTH_VOTE_1025")
 public class Member implements Serializable {
 
     private Long id;
 
+    @DynamoDBAttribute
     private String firstName;
 
+    @DynamoDBAttribute
     private String lastName;
 
     private String streetAddress;
@@ -19,9 +27,10 @@ public class Member implements Serializable {
 
     private String country;
 
-    private String password;
-
+    @DynamoDBHashKey
+    @DynamoDBAttribute
     private String email;
+
 
     private String phone;
 
@@ -59,14 +68,6 @@ public class Member implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getEmail() {
@@ -225,6 +226,8 @@ public class Member implements Serializable {
         this.phone = phone;
     }
 
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -233,7 +236,6 @@ public class Member implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", username=").append(firstName);
-        sb.append(", password=").append(password);
         sb.append(", phone=").append(email);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);

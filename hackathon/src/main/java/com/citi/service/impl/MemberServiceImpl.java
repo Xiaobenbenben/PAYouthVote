@@ -1,17 +1,22 @@
 package com.citi.service.impl;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.citi.api.Member;
 import com.citi.exception.Asserts;
 import com.citi.service.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.*;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 
 /**
  *
@@ -23,6 +28,9 @@ public class MemberServiceImpl implements MemberService {
     private Map<String, String> authCodeCache = new HashMap<>();
     private Map<String, Member> memberCache = new HashMap<>();
     private Map<String, Member> checkinMemberCache = new HashMap<>();
+
+    @Autowired
+    private DynamoDBMapper mapper;
 
     @Override
     public Member getByUsername(String username) {
@@ -62,9 +70,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public String register(String firstName, String lastName, String telephone, String email, String authCode) {
-        if (!verifyAuthCode(authCode, email)) {
-           return "Verification code error";
-        }
+//        if (!verifyAuthCode(authCode, email)) {
+//           return "Verification code error";
+//        }
         Member member = memberCache.get(email);
         if (Objects.nonNull(member) && StringUtils.equals(member.getEmail(), email)) {
             return "The user already exists";
@@ -76,6 +84,7 @@ public class MemberServiceImpl implements MemberService {
         current.setPhone(telephone);
         current.setCreateTime(new Date());
         memberCache.put(email, current);
+        mapper.save(current);
         return "sign up was successful";
     }
 
