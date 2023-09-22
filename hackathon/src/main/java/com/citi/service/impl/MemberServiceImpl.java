@@ -29,8 +29,8 @@ public class MemberServiceImpl implements MemberService {
     private Map<String, Member> memberCache = new HashMap<>();
     private Map<String, Member> checkinMemberCache = new HashMap<>();
 
-    @Autowired
-    private DynamoDBMapper mapper;
+//    @Autowired
+//    private DynamoDBMapper mapper;
 
     @Override
     public Member getByUsername(String username) {
@@ -70,9 +70,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public String register(String firstName, String lastName, String telephone, String email, String authCode) {
-//        if (!verifyAuthCode(authCode, email)) {
-//           return "Verification code error";
-//        }
+        if (!verifyAuthCode(authCode, email)) {
+           return "Verification code error";
+        }
         Member member = memberCache.get(email);
         if (Objects.nonNull(member) && StringUtils.equals(member.getEmail(), email)) {
             return "The user already exists";
@@ -84,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
         current.setPhone(telephone);
         current.setCreateTime(new Date());
         memberCache.put(email, current);
-        mapper.save(current);
+//        mapper.save(current);
         return "sign up was successful";
     }
 
