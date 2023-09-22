@@ -23,8 +23,8 @@ public class MemberServiceImpl implements MemberService {
     private Map<String, Member> memberCache = new HashMap<>();
     private Map<String, String> passwordCache = new HashMap<>();
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+//    @Autowired
+//    private JavaMailSender javaMailSender;
 
     //    @Autowired
 //    private JwtTokenUtil jwtTokenUtil;
@@ -110,8 +110,8 @@ public class MemberServiceImpl implements MemberService {
             simpleMailMessage.setTo(email);
             simpleMailMessage.setSubject("PA Youth Vote AuthCode");
             simpleMailMessage.setText("Your PA Youth Vote AuthCode is: " + authCode);
-            javaMailSender.send(simpleMailMessage);
-            return true;
+//            javaMailSender.send(simpleMailMessage);
+            return false;
         } catch (Exception e) {
             return false;
         }
