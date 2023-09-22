@@ -1,6 +1,6 @@
-package com.citi.service.impl;
+package com.demo.service.impl;
 
-import com.citi.HackathonApplication;
+import com.demo.HackathonApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

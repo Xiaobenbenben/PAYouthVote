@@ -1,4 +1,4 @@
-package com.citi.api;
+package com.demo.api;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
@@ -6,7 +6,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 
 @DynamoDBTable(tableName = "PA_YOUTH_VOTE_1025")
 public class Member implements Serializable {

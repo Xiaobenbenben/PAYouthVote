@@ -1,10 +1,10 @@
-package com.citi.controller;
+package com.demo.controller;
 
-import com.citi.api.CommonResult;
+import com.demo.api.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import com.citi.service.MemberService;
+import com.demo.service.MemberService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

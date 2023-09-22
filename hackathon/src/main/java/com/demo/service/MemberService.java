@@ -1,6 +1,6 @@
-package com.citi.service;
+package com.demo.service;
 
-import com.citi.api.Member;
+import com.demo.api.Member;
 
 import java.util.Date;
 

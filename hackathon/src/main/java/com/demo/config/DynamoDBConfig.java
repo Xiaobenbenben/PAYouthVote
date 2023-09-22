@@ -1,4 +1,4 @@
-package com.citi.config;
+package com.demo.config;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -10,9 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class DynamoDBConfig {
     @Bean
     public AmazonDynamoDB getDynamoDBClient() {
-        System.setProperty("aws.accessKeyId", "1025");
-        System.setProperty("aws.secretKey", "1025");
-        System.setProperty("aws.sessionToken", "789");
         return AmazonDynamoDBClientBuilder.standard()
                 .withRegion("us-east-1")
                 .build();

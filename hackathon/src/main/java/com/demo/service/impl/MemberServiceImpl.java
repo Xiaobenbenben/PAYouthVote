@@ -1,8 +1,8 @@
-package com.citi.service.impl;
+package com.demo.service.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.citi.api.Member;
-import com.citi.service.MemberService;
+import com.demo.api.Member;
+import com.demo.service.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,9 +66,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public String register(String firstName, String lastName, String telephone, String email, String authCode) {
-//        if (!verifyAuthCode(authCode, email)) {
-//           return "Verification code error";
-//        }
+        if (!verifyAuthCode(authCode, email)) {
+           return "Verification code error";
+        }
         Member member = memberCache.get(email);
         if (Objects.nonNull(member) && StringUtils.equals(member.getEmail(), email)) {
             return "The user already exists";
@@ -80,7 +80,7 @@ public class MemberServiceImpl implements MemberService {
         current.setPhone(telephone);
         current.setCreateTime(new Date());
         memberCache.put(email, current);
-        mapper.save(current);
+//        mapper.save(current);
         return "sign up was successful";
     }
 

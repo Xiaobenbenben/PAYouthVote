@@ -1,6 +1,6 @@
-package com.citi.exception;
+package com.demo.exception;
 
-import com.citi.api.IErrorCode;
+import com.demo.api.IErrorCode;
 
 /**
  */
