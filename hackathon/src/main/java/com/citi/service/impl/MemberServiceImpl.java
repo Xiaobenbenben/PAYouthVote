@@ -2,7 +2,6 @@ package com.citi.service.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.citi.api.Member;
-import com.citi.exception.Asserts;
 import com.citi.service.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,8 +14,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.*;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 
 /**
  *
@@ -29,8 +26,8 @@ public class MemberServiceImpl implements MemberService {
     private Map<String, Member> memberCache = new HashMap<>();
     private Map<String, Member> checkinMemberCache = new HashMap<>();
 
-//    @Autowired
-//    private DynamoDBMapper mapper;
+    @Autowired
+    private DynamoDBMapper mapper;
 
     @Override
     public Member getByUsername(String username) {
@@ -39,7 +36,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member getById(Long id) {
-//        return memberMapper.selectByPrimaryKey(id);
         return null;
     }
 
@@ -84,7 +80,7 @@ public class MemberServiceImpl implements MemberService {
         current.setPhone(telephone);
         current.setCreateTime(new Date());
         memberCache.put(email, current);
-//        mapper.save(current);
+        mapper.save(current);
         return "sign up was successful";
     }
 
@@ -131,28 +127,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void updatePassword(String telephone, String password, String authCode) {
-//        UmsMemberExample example = new UmsMemberExample();
-//        example.createCriteria().andPhoneEqualTo(telephone);
-//        List<UmsMember> memberList = memberMapper.selectByExample(example);
-//        if(CollectionUtils.isEmpty(memberList)){
-//            Asserts.fail("该账号不存在");
-//        }
-//        //验证验证码
-//        if(!verifyAuthCode(authCode,telephone)){
-//            Asserts.fail("验证码错误");
-//        }
-//        UmsMember umsMember = memberList.get(0);
-//        umsMember.setPassword(passwordEncoder.encode(password));
-//        memberMapper.updateByPrimaryKeySelective(umsMember);
-//        memberCacheService.delMember(umsMember.getId());
     }
 
     @Override
     public Member getCurrentMember() {
-//        SecurityContext ctx = SecurityContextHolder.getContext();
-//        Authentication auth = ctx.getAuthentication();
-//        MemberDetails memberDetails = (MemberDetails) auth.getPrincipal();
-//        return memberDetails.getUmsMember();
         return null;
     }
 
@@ -164,7 +142,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public String refreshToken(String token) {
-//        return jwtTokenUtil.refreshHeadToken(token);
         return null;
     }
 
