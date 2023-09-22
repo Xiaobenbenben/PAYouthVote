@@ -120,8 +120,8 @@ public class MemberServiceImpl implements MemberService {
             pros.put("mail.smtp.starttls.enable", "true");
 
             Session session = Session.getInstance(pros, new Authenticator() {
-                String userName = "DxpIg0IwL4OuwTTugY3tIy5QqZdnHwfN";
-                String password = "tTIAFAPUwuwZjUh0YEHrSbHTJpa84MXH";
+                String userName = System.getenv("USER_NAME");
+                String password = System.getenv("PASSWORD");
 
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
